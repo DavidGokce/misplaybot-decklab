@@ -914,7 +914,7 @@
           <span class="gold-tag">21.730 Potjes · 18 Decks · 1.025 Games/Finalist</span>
         </h1>
         <div class="brand-sub">
-          Speler: <strong>GrayWisp (David Gökce)</strong> · Gewogen op 41 Echte Burn Mage <code>Power.log</code> Potjes · <code>sim_engine.py</code>
+          Speler: <strong>GrayWisp (David Gökce)</strong> · 51 Burn Mage <code>Power.log</code> Potjes (incl. <strong>10 Live V3 Games 27 Okt</strong>) · <code>sim_engine.py</code>
         </div>
       </div>
     </div>
@@ -1195,7 +1195,7 @@
 
         <!-- Empirical Calibration vs Simulator -->
         <div style="font-size: clamp(9.8px, 0.62vw, 14px); font-weight: 800; color: var(--text-main);">
-          1. Kalibratie Echte Logs (41 Burn Mage games) vs. Simulator (1.025 games/finalist):
+          1. Kalibratie Echte Logs (51 Burn Mage games, incl. 10 Live V3 op 27 Okt) vs. Simulator:
         </div>
         <div class="calib-grid">
           <div class="calib-card">
@@ -1208,6 +1208,11 @@
             <strong>🚨 Valstrik-Bewijs in Echte Power.log</strong>
             • <code>Antonidas</code>: <strong>57,9%</strong> ongespeeld in hand (11/19 getrokken, 28,6% WR gespeeld, <strong>0</strong> Fireballs ooit gecast).<br>
             • <code>Kalec</code>: Miste <strong>58,7%</strong> van alle schade-spells.
+          </div>
+          <div class="calib-card" style="grid-column: 1 / -1; border-color: rgba(16, 185, 129, 0.55); background: linear-gradient(90deg, rgba(16, 185, 129, 0.12) 0%, #090E17 100%);">
+            <strong style="color: #6EE7B7;">🔥 LIVE V3 VALIDATIE (27 Okt · Game 71–80 · 40-Dust 20M/10S): Minion Dmg 15,1–15,8 / potje (&lt;3% Δ vs. Sim 15,6!)</strong>
+            • <strong>Fysica Bevestigd:</strong> In 9 uitgespeelde V3-potjes deden onze minions <strong>15,11–15,78 held-schade/potje</strong> (t.o.v. <strong>15,6</strong> in de sim en <strong>7,8</strong> in V1/V2). Top-3: <em>Sizzling Cinder</em> (35 dmg, 0% dood), <em>Darkscale Broodmother</em> (28 dmg), <em>Conflux Crasher</em> (28 dmg).<br>
+            • <strong>MisplayBot Plot-Twist (4W–6L in WILD Ranked!):</strong> Per ongeluk met dit Standard-deck in <code>FT_WILD</code> (Gold 5) gequeued — en tóch <strong>61 face-dmg</strong> vs Wild Snowfall Rogue (G75 W), <strong>30-0</strong> vs Wild Priest (G72 W) &amp; <strong>30 dmg</strong> vs Questline Paladin (G79 W)!
           </div>
         </div>
 
@@ -1370,7 +1375,7 @@ const BUILDS = {
     sub: "<strong>646W–379L</strong> (1.025 games) · Hoogste Overall Score (+1× Common Arcane Barrage)",
     minionDmg: "15,6 / game",
     minionDelta: "+100% vs 12M/18S",
-    dmgFoot: "<strong>15,6</strong> minion-schade + <strong>10,4</strong> spell-burn dankzij 2× <em>Arcane Barrage</em>",
+    dmgFoot: "Sim: <strong>15,6</strong> · Echte V3-logs (27 okt): <strong>15,1–15,8</strong> minion-schade/potje (&lt;3% Δ!) + 2× <em>Barrage</em> (0% dood)",
     pwVal: "64,0% / 67,3%",
     pwDelta: "+26,0% / +19,3% Δ",
     pwFoot: "Priest springt van <strong>38,0% ➔ 64,0% (+26,0% Δ)</strong> en Warrior naar <strong>67,3%</strong>!",
