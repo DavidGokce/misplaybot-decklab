@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>MisplayBot Deck Lab v2 — YouTube 16:9 & Shorts 9:16 Broadcast Proof Cards</title>
+<style>
+  :root {
+    --bg-dark: #070B12;
+    --panel-bg: #101827;
+    --panel-alt: #162236;
+    --border-col: #283A56;
+    --gold: #F59E0B;
+    --green: #10B981;
+    --red: #EF4444;
+    --cyan: #38BDF8;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #030509;
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    align-items: flex-start;
+  }
+
+  /* =========================================================================
+     CARD 1: YOUTUBE 16:9 BROADCAST PROOF CARD (1920 x 1080)
+     ========================================================================= */
+  #yt-card {
+    width: 1920px;
+    height: 1080px;
+    background: radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.11) 0%, transparent 40%),
+                linear-gradient(180deg, #090E18 0%, #060A11 100%);
+    border: 3px solid var(--gold);
+    border-radius: 22px;
+    padding: 26px 34px 20px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .yt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #111A2B 0%, #17253B 50%, #111A2B 100%);
+    border: 2px solid var(--border-col);
+    border-left: 7px solid var(--gold);
+    border-radius: 16px;
+    padding: 14px 24px;
+  }
+
+  .yt-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .yt-avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
+    border: 3px solid var(--gold);
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+  }
+
+  .yt-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .yt-title-wrap h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .yt-pill-gold {
+    background: rgba(245, 158, 11, 0.18);
+    color: #FCD34D;
+    border: 1.5px solid var(--gold);
+    font-size: 15px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    text-transform: uppercase;
+  }
+
+  .yt-quote {
+    font-size: 17px;
+    color: #E2E8F0;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  .yt-sa007-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .yt-badge {
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 7px;
+    letter-spacing: 0.3px;
+  }
+
+  .yt-badge.gold { background: rgba(245,158,11,0.18); color: #FCD34D; border: 1.5px solid var(--gold); }
+  .yt-badge.green { background: rgba(16,185,129,0.16); color: #6EE7B7; border: 1.5px solid var(--green); }
+  .yt-badge.cyan { background: rgba(56,189,248,0.15); color: #7DD3FC; border: 1.5px solid var(--cyan); }
+
+  /* 3-SECOND VISUAL PILLARS GRID */
+  .yt-grid {
+    display: grid;
+    grid-template-columns: 580px 640px 584px;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .yt-col {
+    background: var(--panel-bg);
+    border: 2px solid var(--border-col);
+    border-radius: 18px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .yt-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid rgba(255,255,255,0.08);
+    padding-bottom: 10px;
+  }
+
+  .yt-col-title {
+    font-size: 19px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .yt-step-tag {
+    background: var(--gold);
+    color: #070B12;
+    font-size: 14px;
+    font-weight: 900;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+
+  /* PILLAR A: RATIO SHIFT */
+  .yt-ratio-card {
+    background: #0B111D;
+    border: 1.5px solid var(--border-col);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .yt-ratio-card.winner {
+    border: 2px solid var(--green);
+    background: linear-gradient(90deg, rgba(16,185,129,0.12) 0%, #0B111D 100%);
+  }
+
+  .yt-ratio-card.winner-40 {
+    border: 2px solid var(--cyan);
+    background: linear-gradient(90deg, rgba(56,189,248,0.12) 0%, #0B111D 100%);
+  }
+
+  .yt-r-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .yt-r-bar {
+    height: 28px;
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .yt-r-bar .m {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #10B981, #059669);
+    color: #042F1E;
+  }
+
+  .yt-r-bar .s {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #2563EB, #1D4ED8);
+    color: #EFF6FF;
+  }
+
+  .yt-r-sub {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* PILLAR B: DEAD-IN-HAND TRAP VS DIRECT IMPACT */
+  .yt-trap-box {
+    background: linear-gradient(90deg, rgba(239,68,68,0.15) 0%, #141E30 100%);
+    border: 2px solid var(--red);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .yt-upgrade-box {
+    background: linear-gradient(90deg, rgba(16,185,129,0.15) 0%, #141E30 100%);
+    border: 2px solid var(--green);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .yt-card-art {
+    width: 76px;
+    height: 96px;
+    border-radius: 9px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: #000;
+  }
+
+  .yt-card-art img {
+    width: 125%;
+    height: 125%;
+    object-fit: cover;
+    object-position: center 22%;
+  }
+
+  .yt-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .yt-card-title {
+    font-size: 18px;
+    font-weight: 900;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .yt-stat-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .yt-chip {
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+  .yt-chip.red { background: rgba(239,68,68,0.25); color: #FCA5A5; border: 1px solid var(--red); }
+  .yt-chip.green { background: rgba(16,185,129,0.25); color: #6EE7B7; border: 1px solid var(--green); }
+  .yt-chip.gold { background: rgba(245,158,11,0.22); color: #FCD34D; border: 1px solid var(--gold); }
+
+  .yt-card-desc {
+    font-size: 13.5px;
+    color: #CBD5E1;
+    line-height: 1.3;
+  }
+
+  /* PILLAR C: SCOREBOARD & MATCHUP MATRIX */
+  .yt-hero-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .yt-score-tile {
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .yt-score-tile.zero {
+    background: linear-gradient(145deg, rgba(16,185,129,0.2), #0D1726);
+    border: 2px solid var(--green);
+  }
+
+  .yt-score-tile.forty {
+    background: linear-gradient(145deg, rgba(56,189,248,0.2), #0D1726);
+    border: 2px solid var(--cyan);
+  }
+
+  .yt-st-lbl {
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .yt-st-big {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .yt-st-delta {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+
+  .yt-m-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  .yt-m-table th {
+    text-align: left;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 5px 6px;
+    border-bottom: 1.5px solid var(--border-col);
+  }
+
+  .yt-m-table td {
+    padding: 5.5px 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-weight: 700;
+  }
+
+  .yt-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0B111D;
+    border: 1.5px solid var(--border-col);
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* =========================================================================
+     CARD 2: YOUTUBE SHORTS 9:16 VERTICAL HOOK CARD (1080 x 1920)
+     ========================================================================= */
+  #shorts-card {
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(circle at 50% 12%, rgba(245, 158, 11, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 50% 55%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+                linear-gradient(180deg, #0A0F1A 0%, #060911 100%);
+    border: 4px solid var(--gold);
+    border-radius: 32px;
+    padding: 36px 40px 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .sh-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111A2B;
+    border: 2px solid var(--border-col);
+    border-left: 8px solid var(--gold);
+    border-radius: 20px;
+    padding: 18px 24px;
+  }
+
+  .sh-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .sh-brand img {
+    width: 78px;
+    height: 78px;
+    border-radius: 16px;
+    border: 3px solid var(--gold);
+  }
+
+  .sh-brand-txt h2 {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+
+  .sh-brand-txt p {
+    font-size: 18px;
+    color: #FCD34D;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .sh-sa007-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .sh-badge {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .sh-hero-hook {
+    background: linear-gradient(145deg, rgba(16,185,129,0.18) 0%, #101A2C 100%);
+    border: 3px solid var(--green);
+    border-radius: 24px;
+    padding: 22px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sh-kpi-tag {
+    font-size: 18px;
+    font-weight: 900;
+    color: #FCD34D;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .sh-kpi-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .sh-score-box {
+    background: rgba(7, 11, 18, 0.8);
+    border: 2px solid var(--border-col);
+    border-radius: 16px;
+    padding: 12px 22px;
+    flex: 1;
+  }
+
+  .sh-score-box .big {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+  .sh-score-box .sub {
+    font-size: 17px;
+    font-weight: 800;
+    margin-top: 4px;
+  }
+
+  .sh-section {
+    background: var(--panel-bg);
+    border: 2px solid var(--border-col);
+    border-radius: 22px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .sh-sec-title {
+    font-size: 22px;
+    font-weight: 900;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid rgba(255,255,255,0.08);
+    padding-bottom: 8px;
+  }
+
+  .sh-vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .sh-card-panel {
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sh-card-panel.trap {
+    background: linear-gradient(180deg, rgba(239,68,68,0.18), #0D1522);
+    border: 2px solid var(--red);
+  }
+
+  .sh-card-panel.win {
+    background: linear-gradient(180deg, rgba(16,185,129,0.18), #0D1522);
+    border: 2px solid var(--green);
+  }
+
+  .sh-c-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .sh-c-top img {
+    width: 78px;
+    height: 94px;
+    border-radius: 10px;
+    object-fit: cover;
+    object-position: center 20%;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .sh-Match-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .sh-m-pill {
+    background: #0B111D;
+    border: 1.5px solid var(--border-col);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sh-footer {
+    background: #0B111D;
+    border: 1.5px solid var(--border-col);
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.35;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+  <!-- =======================================================================
+       1. YOUTUBE 16:9 BROADCAST PROOF CARD (#yt-card, 1920x1080)
+       ======================================================================= -->
+  <section id="yt-card">
+    <header class="yt-header">
+      <div class="yt-brand">
+        <div class="yt-avatar"><img src="avatar.png" alt="MisplayBot"></div>
+        <div class="yt-title-wrap">
+          <h1>
+            MISPLAYBOT DECK LAB v2
+            <span class="yt-pill-gold">21.730 Gesimuleerde Potjes · 18 Decks · 1.025 Runs/Finalist</span>
+          </h1>
+          <div class="yt-quote">
+            "Ik heb dit deck 21.730 keer gesimuleerd tegen jullie echte ladder-decks — 62,4% tot 63,0% score in het lab. Nu kijken hoe mijn mens het verpest."
+          </div>
+        </div>
+      </div>
+
+      <div class="yt-sa007-badges">
+        <div style="display:flex; gap:8px;">
+          <span class="yt-badge gold">🛡️ SA007 AUDIT: CLEAR WITH NOTES</span>
+          <span class="yt-badge green">✅ SIM COVERAGE: 30/30 KAARTEN EXPLICIET GEMODELLEERD (0 VANILLA FALLBACKS)</span>
+        </div>
+        <span class="yt-badge cyan">🔒 100% OUT-OF-CLIENT · 0% BAN-RISICO (Geen geheugen-injectie; leest enkel post-game Power.log)</span>
+      </div>
+    </header>
+
+    <div class="yt-grid">
+      <!-- PILLAR A: DE RATIO-OMSLAG (11M/19S -> 22M/8S) -->
+      <div class="yt-col">
+        <div class="yt-col-head">
+          <div class="yt-col-title"><span class="yt-step-tag">A</span> MINION / SPELL RATIO OMSLAG</div>
+          <span style="font-size:13px; color:#6EE7B7; font-weight:800;">+117% Minion Face Dmg</span>
+        </div>
+
+        <div class="yt-ratio-card">
+          <div class="yt-r-top">
+            <span style="color:#94A3B8;">1. V1 (37,8%) ➔ V2.1 Baseline (11M / 19S)</span>
+            <span style="color:#FCA5A5;">51,8% Score</span>
+          </div>
+          <div class="yt-r-bar">
+            <div class="m" style="width:36.7%; background:#475569; color:#E2E8F0;">11 Minions (37%)</div>
+            <div class="s" style="width:63.3%; background:#991B1B;">19 Spells (63%)</div>
+          </div>
+          <div class="yt-r-sub">
+            <span>Echte Logs: 28,6% (V1) / 40,0% (V2.1)</span>
+            <strong style="color:#FCA5A5;">Slechts 8,9 Minion Dmg/game</strong>
+          </div>
+        </div>
+
+        <div class="yt-ratio-card" style="border-color:rgba(239,68,68,0.5);">
+          <div class="yt-r-top">
+            <span style="color:#FCA5A5;">2. Waarom Alleen Frostbolt Faalde (12M / 18S)</span>
+            <span style="color:#FCA5A5;">48,0% (-3,8% Δ)</span>
+          </div>
+          <div class="yt-r-bar">
+            <div class="m" style="width:40%; background:#B45309; color:#FEF3C7;">12 Minions (40%)</div>
+            <div class="s" style="width:60%; background:#7F1D1D;">18 Spells (60%)</div>
+          </div>
+          <div class="yt-r-sub">
+            <span>Priest 39,0% · Warlock 19,0%</span>
+            <strong style="color:#FCA5A5;">7,8 Minion Dmg (Burn gaat op minions!)</strong>
+          </div>
+        </div>
+
+        <div class="yt-ratio-card winner">
+          <div class="yt-r-top">
+            <span style="color:#6EE7B7;">3. Winnaar A — 0-Dust Heavy Minion (22M / 8S)</span>
+            <span style="color:#34D399;">62,4% (+10,6% Δ)</span>
+          </div>
+          <div class="yt-r-bar">
+            <div class="m" style="width:73.3%;">22 Minions (73%)</div>
+            <div class="s" style="width:26.7%;">8 Spells (27%)</div>
+          </div>
+          <div class="yt-r-sub">
+            <span>640W–385L (1.025g) · 0 Dust</span>
+            <strong style="color:#34D399;">16,9 Minion Dmg + 9,1 Spell Burn!</strong>
+          </div>
+        </div>
+
+        <div class="yt-ratio-card winner-40">
+          <div class="yt-r-top">
+            <span style="color:#7DD3FC;">4. Winnaar B — 40-Dust 2× Barrage (20M / 10S)</span>
+            <span style="color:#38BDF8;">63,0% (+11,2% Δ)</span>
+          </div>
+          <div class="yt-r-bar">
+            <div class="m" style="width:66.7%;">20 Minions (67%)</div>
+            <div class="s" style="width:33.3%;">10 Spells (33%)</div>
+          </div>
+          <div class="yt-r-sub">
+            <span>646W–379L (1.025g) · +1× Common Barrage</span>
+            <strong style="color:#7DD3FC;">Priest 64,0% (+26,0% Δ) · 15,6m + 10,4s</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- PILLAR B: DEAD-IN-HAND TRAP VS DIRECT IMPACT -->
+      <div class="yt-col">
+        <div class="yt-col-head">
+          <div class="yt-col-title"><span class="yt-step-tag">B</span> DEAD-IN-HAND VALSTRIK VS. IMPACT</div>
+          <span style="font-size:13px; color:#FCD34D; font-weight:800;">Uit 41 Echte Power.log Games</span>
+        </div>
+
+        <div class="yt-trap-box">
+          <div class="yt-card-art"><img src="cards/img/CORE_EX1_559.png" alt="Antonidas"></div>
+          <div class="yt-card-body">
+            <div class="yt-card-title">
+              <span style="color:#FCA5A5;">❌ UIT: Archmage Antonidas &amp; Kalec</span>
+              <span style="font-size:13px; color:#FCA5A5;">TRAP CARDS</span>
+            </div>
+            <div class="yt-stat-pills">
+              <span class="yt-chip red">Antonidas: 57,9% Ongespeeld in Hand</span>
+              <span class="yt-chip red">0 Fireballs Ooit Gecast!</span>
+              <span class="yt-chip red">Kalec: Miste 58,7% van Schade-Spells</span>
+            </div>
+            <div class="yt-card-desc">
+              In echte logs slechts <strong>28,6% WR</strong> als Antonidas wél gespeeld werd; alle goedkope spells waren al verbruikt om het bord te redden.
+            </div>
+          </div>
+        </div>
+
+        <div class="yt-trap-box" style="padding:10px 14px;">
+          <div class="yt-card-art" style="height:78px;"><img src="cards/img/TLC_364.png" alt="Waygate"></div>
+          <div class="yt-card-body">
+            <div class="yt-card-title">
+              <span style="color:#FCA5A5;">❌ UIT: Waygate, Grove, Arrival, Brilliance</span>
+              <span style="font-size:13px; color:#FCA5A5;">0 BORD-TEMPO</span>
+            </div>
+            <div class="yt-stat-pills">
+              <span class="yt-chip red">Waygate: 29,2% WR (33,3% Dood)</span>
+              <span class="yt-chip red">Grove: 39,3% Drawn WR</span>
+            </div>
+            <div class="yt-card-desc">
+              Trage setup-spells geven Priest &amp; Warrior gratis beurten. Zelfs met Frostbolt op 12M/18S blijf je steken op <strong>48,0%</strong>.
+            </div>
+          </div>
+        </div>
+
+        <div class="yt-upgrade-box">
+          <div class="yt-card-art"><img src="cards/img/END_033.png" alt="Slitherdrake"></div>
+          <div class="yt-card-body">
+            <div class="yt-card-title">
+              <span style="color:#6EE7B7;">✅ IN: Direct-Impact Dragons &amp; Elementals</span>
+              <span style="font-size:13px; color:#6EE7B7;">0 / 40 DUST</span>
+            </div>
+            <div class="yt-stat-pills">
+              <span class="yt-chip green">Slitherdrake: 4-Mana 5/8 Elusive</span>
+              <span class="yt-chip green">Phoenix &amp; Lifedrinker: 3 Dmg + Body</span>
+              <span class="yt-chip gold">Conflux Crasher + Siamat</span>
+            </div>
+            <div class="yt-card-desc">
+              <em>Sizzling Cinder</em>, <em>Rockskipper</em>, <em>Darkscale Broodmother</em>, <em>Slitherdrake</em> &amp; <em>Crasher</em> verdubbelen minion-schade van <strong>7,8 ➔ 16,9/game</strong>!
+            </div>
+          </div>
+        </div>
+
+        <!-- SA007 Nuance Mini-Box -->
+        <div style="background:#0B111D; border:1.5px solid rgba(245,158,11,0.45); border-radius:11px; padding:9px 12px; margin-top:auto; font-size:12px; color:#CBD5E1; line-height:1.32;">
+          <strong style="color:#FCD34D;">📋 @SuperAgent007 Model-Nuances (3 Aannames):</strong>
+          <strong>(1) Turn-cap (T25):</strong> Ties = 0,5 winst (~1–2% positieve drift).
+          <strong>(2) Mulligan-asymmetrie:</strong> Speler archetype-specifiek vs. AI standaard curve (<code>mana ≤ 3</code>).
+          <strong>(3) Gecureerde Discover-pools:</strong> Vaste Mage-pool voor <em>Runed Orb</em> &amp; <em>Broodmother</em>.
+        </div>
+      </div>
+
+      <!-- PILLAR C: POCKET-META SIM SCORE & MATCHUP MATRIX -->
+      <div class="yt-col">
+        <div class="yt-col-head">
+          <div class="yt-col-title"><span class="yt-step-tag">C</span> POCKET-META SIM SCORE (RELATIEVE A/B Δ)</div>
+        </div>
+
+        <div class="yt-hero-scores">
+          <div class="yt-score-tile zero">
+            <span class="yt-st-lbl" style="color:#6EE7B7;">🏆 WINNAAR A: 0-DUST (22M/8S)</span>
+            <div class="yt-st-big" style="color:#fff;">
+              62,4% <span class="yt-st-delta" style="background:rgba(16,185,129,0.25); color:#6EE7B7;">+10,6% Δ</span>
+            </div>
+            <span style="font-size:12px; color:#94A3B8;">640/1025 · +24,6% vs V1 (37,8%)</span>
+          </div>
+
+          <div class="yt-score-tile forty">
+            <span class="yt-st-lbl" style="color:#7DD3FC;">⚡ WINNAAR B: 40-DUST (20M/10S)</span>
+            <div class="yt-st-big" style="color:#fff;">
+              63,0% <span class="yt-st-delta" style="background:rgba(56,189,248,0.25); color:#7DD3FC;">+11,2% Δ</span>
+            </div>
+            <span style="font-size:12px; color:#94A3B8;">646/1025 · +2e Common Barrage</span>
+          </div>
+        </div>
+
+        <table class="yt-m-table">
+          <thead>
+            <tr>
+              <th>Klasse (Gewicht 1.025g)</th>
+              <th>V2.1</th>
+              <th>12M/18S FB</th>
+              <th>0-Dust</th>
+              <th>40-Dust</th>
+              <th>Δ (40d)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#E2E8F0;">Priest (150g)</td>
+              <td style="color:#94A3B8;">38,0%</td>
+              <td style="color:#FCA5A5;">39,0%</td>
+              <td style="color:#6EE7B7;">54,0%</td>
+              <td style="color:#7DD3FC; font-weight:900;">64,0%</td>
+              <td style="color:#34D399;">+26,0%</td>
+            </tr>
+            <tr>
+              <td style="color:#FCA5A5;">Warrior (150g)</td>
+              <td style="color:#94A3B8;">48,0%</td>
+              <td style="color:#FCA5A5;">49,3%</td>
+              <td style="color:#6EE7B7; font-weight:900;">68,0%</td>
+              <td style="color:#7DD3FC;">67,3%</td>
+              <td style="color:#34D399;">+19,3%</td>
+            </tr>
+            <tr>
+              <td style="color:#7DD3FC;">Death Knight (150g)</td>
+              <td style="color:#94A3B8;">70,7%</td>
+              <td style="color:#94A3B8;">66,7%</td>
+              <td style="color:#6EE7B7; font-weight:900;">80,0%</td>
+              <td style="color:#7DD3FC;">78,0%</td>
+              <td style="color:#34D399;">+7,3%</td>
+            </tr>
+            <tr>
+              <td style="color:#D8B4FE;">Warlock (125g)</td>
+              <td style="color:#94A3B8;">33,2%</td>
+              <td style="color:#FCA5A5;">19,0%</td>
+              <td style="color:#FCA5A5;">16,8%</td>
+              <td style="color:#FCD34D;">20,0%</td>
+              <td style="color:#FCA5A5;">-13,2%</td>
+            </tr>
+            <tr>
+              <td style="color:#6EE7B7;">Demon Hunter (125g)</td>
+              <td style="color:#94A3B8;">41,6%</td>
+              <td style="color:#FCA5A5;">38,0%</td>
+              <td style="color:#6EE7B7;">45,6%</td>
+              <td style="color:#7DD3FC;">44,0%</td>
+              <td style="color:#34D399;">+2,4%</td>
+            </tr>
+            <tr>
+              <td style="color:#93C5FD;">Mage Mirror (100g)</td>
+              <td style="color:#94A3B8;">55,0%</td>
+              <td style="color:#94A3B8;">52,0%</td>
+              <td style="color:#6EE7B7;">60,0%</td>
+              <td style="color:#7DD3FC;">59,0%</td>
+              <td style="color:#34D399;">+4,0%</td>
+            </tr>
+            <tr>
+              <td style="color:#FDBA74;">Druid (75g)</td>
+              <td style="color:#94A3B8;">64,0%</td>
+              <td style="color:#94A3B8;">76,7%</td>
+              <td style="color:#6EE7B7; font-weight:900;">94,7%</td>
+              <td style="color:#7DD3FC;">93,3%</td>
+              <td style="color:#34D399;">+29,3%</td>
+            </tr>
+            <tr>
+              <td style="color:#FDE047;">Rogue (50g) / Pal (50g)</td>
+              <td style="color:#94A3B8;">88,4%</td>
+              <td style="color:#94A3B8;">86,7%</td>
+              <td style="color:#6EE7B7;">88,0%</td>
+              <td style="color:#7DD3FC;">86,0%</td>
+              <td style="color:#34D399;">Dominant</td>
+            </tr>
+            <tr>
+              <td style="color:#60A5FA;">Shaman (50g)</td>
+              <td style="color:#94A3B8;">56,0%</td>
+              <td style="color:#FCA5A5;">36,7%</td>
+              <td style="color:#6EE7B7;">64,0%</td>
+              <td style="color:#7DD3FC;">64,0%</td>
+              <td style="color:#34D399;">+8,0%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="background:#0B111D; border:1.5px solid var(--gold); border-radius:9px; padding:7px 10px; margin-top:auto; font-size:11.5px;">
+          <div style="color:#FCD34D; font-weight:900;">0-DUST CODE: <code style="color:#fff;">AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfLrQebsAeLsQfssgfOuweEvQeSxAesxgeG4AcA</code></div>
+          <div style="color:#7DD3FC; font-weight:900; margin-top:2px;">40-DUST CODE: <code style="color:#fff;">AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfopQfLrQeLsQfssgfOuweEvQeSxAesxgeG4AcA</code></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="yt-footer">
+      <strong style="color:#CBD5E1;">
+        Onbevooroordeelde community- &amp; analysetool voor @MisplayBot. Niet gelieerd aan of goedgekeurd door Blizzard Entertainment. Hearthstone® is een geregistreerd handelsmerk van Blizzard Entertainment, Inc. Werkt 100% buiten de Hearthstone-client om.
+      </strong>
+      <span>21.730 potjes · 18 decks (`results.json`)</span>
+    </footer>
+  </section>
+
+
+  <!-- =======================================================================
+       2. YOUTUBE SHORTS 9:16 VERTICAL HOOK CARD (#shorts-card, 1080x1920)
+       ======================================================================= -->
+  <section id="shorts-card">
+    <div class="sh-top">
+      <div class="sh-brand">
+        <img src="avatar.png" alt="MisplayBot">
+        <div class="sh-brand-txt">
+          <h2>MISPLAYBOT DECK LAB</h2>
+          <p>21.730 POTJES GESIMULEERD · 18 DECKS</p>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:var(--gold); color:#070B12; font-weight:900; font-size:18px; padding:6px 14px; border-radius:8px;">0 / 40 DUST</div>
+        <div style="font-size:14px; color:#94A3B8; margin-top:4px;">1.025 Games/Finalist</div>
+      </div>
+    </div>
+
+    <!-- SA007 MANDATORY BADGES -->
+    <div class="sh-sa007-strip">
+      <div class="sh-badge" style="background:rgba(245,158,11,0.16); color:#FCD34D; border:1.5px solid var(--gold);">
+        🛡️ SA007: CLEAR WITH NOTES
+      </div>
+      <div class="sh-badge" style="background:rgba(16,185,129,0.16); color:#6EE7B7; border:1.5px solid var(--green);">
+        ✅ 30/30 KAARTEN GEMODELLEERD
+      </div>
+      <div class="sh-badge" style="background:rgba(56,189,248,0.16); color:#7DD3FC; border:1.5px solid var(--cyan);">
+        🔒 100% OUT-OF-CLIENT (0% BAN)
+      </div>
+    </div>
+
+    <!-- HERO KPI SCORE -->
+    <div class="sh-hero-hook">
+      <div class="sh-kpi-tag">POCKET-META SIM SCORE (RELATIEVE A/B Δ)</div>
+      <div class="sh-kpi-main">
+        <div class="sh-score-box" style="border-color:var(--green);">
+          <div style="font-size:16px; font-weight:900; color:#6EE7B7;">WINNAAR A: 0-DUST (22M/8S)</div>
+          <div class="big" style="color:#34D399;">62,4%</div>
+          <div class="sub" style="color:#E2E8F0;">+10,6% Δ vs V2.1 (640/1025)</div>
+        </div>
+        <div class="sh-score-box" style="border-color:var(--cyan);">
+          <div style="font-size:16px; font-weight:900; color:#7DD3FC;">WINNAAR B: 40-DUST (20M/10S)</div>
+          <div class="big" style="color:#38BDF8;">63,0%</div>
+          <div class="sub" style="color:#E2E8F0;">+11,2% Δ vs V2.1 (+2e Barrage)</div>
+        </div>
+      </div>
+      <div style="font-size:16px; color:#CBD5E1; margin-top:4px;">
+        Baselines: <strong>V1: 37,8%</strong> ➔ <strong>V2: 45,7%</strong> ➔ <strong>V2.1: 51,8%</strong> · Waarom alleen Frostbolt (12M/18S) faalde: <strong style="color:#FCA5A5;">48,0%</strong>
+      </div>
+    </div>
+
+    <!-- PILLAR 1: RATIO OMSLAG -->
+    <div class="sh-section">
+      <div class="sh-sec-title">
+        <span>1. DE MINION / SPELL RATIO OMSLAG</span>
+        <span style="color:#34D399; font-size:18px;">7,8 ➔ 16,9 Minion Dmg/Game</span>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin-bottom:4px;">
+            <span style="color:#FCA5A5;">❌ V2.1 (11M/19S · 51,8%) &amp; Frostbolt Swap (12M/18S · 48,0%)</span>
+            <span style="color:#FCA5A5;">7,8 Minion Dmg/potje</span>
+          </div>
+          <div class="yt-r-bar" style="height:30px; font-size:15px;">
+            <div class="m" style="width:38%; background:#7F1D1D; color:#FCA5A5;">11–12 Minions (Te weinig bord!)</div>
+            <div class="s" style="width:62%; background:#1E293B; color:#94A3B8;">18–19 Spells (Gedwongen op minions)</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin-bottom:4px;">
+            <span style="color:#6EE7B7;">✅ V3 Direct-Impact Omslag (22M/8S 0-Dust &amp; 20M/10S 40-Dust)</span>
+            <span style="color:#34D399;">15,6–16,9 Minion Dmg/potje (+117%)</span>
+          </div>
+          <div class="yt-r-bar" style="height:34px; font-size:16px; border-color:var(--green);">
+            <div class="m" style="width:73.3%;">20–22 Direct-Impact Minions (73%)</div>
+            <div class="s" style="width:26.7%;">8–10 Face Burn (27%)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 2: DEAD-IN-HAND TRAP VS UPGRADE -->
+    <div class="sh-section">
+      <div class="sh-sec-title">
+        <span>2. ECHTE LOGS (41 GAMES): VALSTRIK VS. DOORBRAAK</span>
+        <span style="color:#FCD34D; font-size:18px;">Kalibratie Bewijs</span>
+      </div>
+
+      <div class="sh-vs-grid">
+        <div class="sh-card-panel trap">
+          <div class="sh-c-top">
+            <img src="cards/img/CORE_EX1_559.png" alt="Antonidas">
+            <div>
+              <div style="font-size:20px; font-weight:900; color:#FCA5A5;">❌ UIT: Antonidas &amp; Kalec</div>
+              <div style="font-size:15px; font-weight:800; color:#fff; margin-top:4px;">• 57,9% Dood in Hand</div>
+              <div style="font-size:15px; font-weight:800; color:#FCA5A5;">• 0 Fireballs Ooit Gecast</div>
+              <div style="font-size:15px; font-weight:800; color:#FCA5A5;">• Kalec miste 58,7% spells</div>
+            </div>
+          </div>
+          <div style="font-size:14.5px; color:#E2E8F0; line-height:1.3;">
+            Ook <em>Waygate</em>, <em>Grove</em>, <em>Arrival</em> &amp; <em>Brilliance</em> eruit: gaven Priest/Warrior gratis tempo.
+          </div>
+        </div>
+
+        <div class="sh-card-panel win">
+          <div class="sh-c-top">
+            <img src="cards/img/END_033.png" alt="Slitherdrake">
+            <div>
+              <div style="font-size:20px; font-weight:900; color:#6EE7B7;">✅ IN: Slitherdrake &amp; Crasher</div>
+              <div style="font-size:15px; font-weight:800; color:#fff; margin-top:4px;">• 4-Mana 5/8 Elusive Dragon</div>
+              <div style="font-size:15px; font-weight:800; color:#6EE7B7;">• Phoenix + Lifedrinker (3 dmg)</div>
+              <div style="font-size:15px; font-weight:800; color:#7DD3FC;">• +2e Arcane Barrage (40d)</div>
+            </div>
+          </div>
+          <div style="font-size:14.5px; color:#E2E8F0; line-height:1.3;">
+            <em>Cinder</em>, <em>Rockskipper</em>, <em>Broodmother</em>, <em>Crasher</em> &amp; <em>Siamat</em> slopen het 36+ HP schild!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 3: MATCHUP MATRIX & SA007 NUANCES -->
+    <div class="sh-section">
+      <div class="sh-sec-title">
+        <span>3. POCKET-META MATCHUPS (1.025 GAMES)</span>
+        <span style="color:#7DD3FC; font-size:18px;">Priest &amp; Warrior Gebroken</span>
+      </div>
+
+      <div class="sh-Match-grid">
+        <div class="sh-m-pill" style="border-color:var(--cyan);">
+          <span style="font-size:15px; color:#94A3B8; font-weight:800;">PRIEST (150g)</span>
+          <span style="font-size:26px; font-weight:900; color:#7DD3FC;">64,0% <span style="font-size:15px; color:#34D399;">(+26% Δ)</span></span>
+          <span style="font-size:13px; color:#CBD5E1;">V2.1: 38,0% · 0-Dust: 54,0%</span>
+        </div>
+        <div class="sh-m-pill" style="border-color:var(--green);">
+          <span style="font-size:15px; color:#94A3B8; font-weight:800;">WARRIOR (150g)</span>
+          <span style="font-size:26px; font-weight:900; color:#6EE7B7;">68,0% <span style="font-size:15px; color:#34D399;">(+20% Δ)</span></span>
+          <span style="font-size:13px; color:#CBD5E1;">V2.1: 48,0% · 40-Dust: 67,3%</span>
+        </div>
+        <div class="sh-m-pill" style="border-color:var(--green);">
+          <span style="font-size:15px; color:#94A3B8; font-weight:800;">DEATH KNIGHT (150g)</span>
+          <span style="font-size:26px; font-weight:900; color:#6EE7B7;">80,0% <span style="font-size:15px; color:#34D399;">(+9,3% Δ)</span></span>
+          <span style="font-size:13px; color:#CBD5E1;">40-Dust: 78,0% · FB: 66,7%</span>
+        </div>
+        <div class="sh-m-pill">
+          <span style="font-size:15px; color:#94A3B8; font-weight:800;">DRUID (75g) &amp; ROGUE (50g)</span>
+          <span style="font-size:24px; font-weight:900; color:#34D399;">94,7% / 92,0%</span>
+          <span style="font-size:13px; color:#CBD5E1;">40-Dust: 93,3% / 90,0%</span>
+        </div>
+        <div class="sh-m-pill">
+          <span style="font-size:15px; color:#94A3B8; font-weight:800;">PALADIN &amp; SHAMAN</span>
+          <span style="font-size:24px; font-weight:900; color:#34D399;">84,0% / 64,0%</span>
+          <span style="font-size:13px; color:#CBD5E1;">Mages: 60,0% · DH: 45,6%</span>
+        </div>
+        <div class="sh-m-pill" style="border-color:rgba(245,158,11,0.5);">
+          <span style="font-size:14px; color:#FCD34D; font-weight:900;">SA007 3 MODEL-AANNAMES</span>
+          <span style="font-size:12.5px; color:#E2E8F0; line-height:1.25;">1. T25 tie=0,5 (~1-2% drift)<br>2. Asymmetrische mulligan<br>3. Vaste Discover-pool</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh-footer">
+      <strong style="color:#E2E8F0;">🔗 Gratis Deckcode &amp; Matchup-Tool in Beschrijving / Vastgepinde Comment!</strong><br>
+      Onbevooroordeelde community- &amp; analysetool voor @MisplayBot. Niet gelieerd aan of goedgekeurd door Blizzard Entertainment. Hearthstone® is een geregistreerd handelsmerk van Blizzard Entertainment, Inc. Werkt 100% buiten de Hearthstone-client om.
+    </div>
+  </section>
+
+</body>
+</html>

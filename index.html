@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MisplayBot Deck Lab v2 — 21.730 Monte Carlo Suite & SA007 Audit</title>
+<style>
+  :root {
+    --bg-slate: #080C14;
+    --card-bg: #111826;
+    --card-bg-alt: #162032;
+    --border-subtle: #24324B;
+    --accent-gold: #F59E0B;
+    --accent-gold-dim: rgba(245, 158, 11, 0.14);
+    --trap-red: #EF4444;
+    --trap-red-dim: rgba(239, 68, 68, 0.14);
+    --upgrade-green: #10B981;
+    --upgrade-green-dim: rgba(16, 185, 129, 0.14);
+    --cyan-info: #38BDF8;
+    --cyan-dim: rgba(56, 189, 248, 0.14);
+    --purple-acc: #A855F7;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    width: 1680px;
+    height: 1050px;
+    background-color: var(--bg-slate);
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 88% 12%, rgba(16, 185, 129, 0.07) 0%, transparent 35%),
+      radial-gradient(circle at 50% 92%, rgba(56, 189, 248, 0.06) 0%, transparent 40%);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px 6px 14px;
+    gap: 8px;
+  }
+
+  /* TOP HEADER */
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #101726 0%, #152033 50%, #101726 100%);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--accent-gold);
+    border-radius: 10px;
+    padding: 7px 14px;
+    height: 60px;
+    flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .avatar-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: 2px solid var(--accent-gold);
+    overflow: hidden;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+    flex-shrink: 0;
+    background: #000;
+  }
+
+  .avatar-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .brand-title h1 {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .brand-title h1 .gold-tag {
+    background: var(--accent-gold-dim);
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    font-size: 9.5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-sub {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* INTERACTIVE BUILD SWITCHER */
+  .build-switcher {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0A0F18;
+    padding: 4px 6px;
+    border-radius: 9px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .tab-btn {
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    padding: 6px 11px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+
+  .tab-btn .tab-badge {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 1.5px 5px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .tab-btn.active-0dust {
+    background: rgba(16, 185, 129, 0.16);
+    color: #6EE7B7;
+    border-color: #10B981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  }
+  .tab-btn.active-0dust .tab-badge {
+    background: #10B981;
+    color: #052E16;
+  }
+
+  .tab-btn.active-40dust {
+    background: rgba(56, 189, 248, 0.16);
+    color: #7DD3FC;
+    border-color: #38BDF8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.22);
+  }
+  .tab-btn.active-40dust .tab-badge {
+    background: #38BDF8;
+    color: #082F49;
+  }
+
+  .tab-btn.active-frostbolt {
+    background: rgba(239, 68, 68, 0.16);
+    color: #FCA5A5;
+    border-color: #EF4444;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+  }
+  .tab-btn.active-frostbolt .tab-badge {
+    background: #EF4444;
+    color: #fff;
+  }
+
+  /* SA007 MANDATORY HEADER BADGES */
+  .audit-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  .audit-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .badge-sa007 {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 2.5px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+
+  .badge-sa007.clear {
+    background: rgba(245, 158, 11, 0.16);
+    color: #FCD34D;
+    border: 1px solid rgba(245, 158, 11, 0.45);
+  }
+
+  .badge-sa007.cov {
+    background: rgba(16, 185, 129, 0.14);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.45);
+  }
+
+  .badge-sa007.safe {
+    background: rgba(56, 189, 248, 0.13);
+    color: #7DD3FC;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+  }
+
+  /* MAIN 3-ZONE GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 490px 660px 482px;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 9px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 5px;
+  }
+
+  .panel-title {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .zone-tag {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(245, 158, 11, 0.16);
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+
+  .dust-saved-pill {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.2));
+    border: 1px solid var(--upgrade-green);
+    color: #6EE7B7;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
+
+  /* MINION / SPELL RATIO SHIFT BAR */
+  .ratio-shift-box {
+    background: #0B101B;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 7px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ratio-shift-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .ratio-bars-grid {
+    display: grid;
+    grid-template-columns: 112px 1fr 78px;
+    align-items: center;
+    gap: 7px;
+    font-size: 9.8px;
+  }
+
+  .dual-bar {
+    height: 13px;
+    background: #1E293B;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .dual-bar .m-seg {
+    background: linear-gradient(90deg, #10B981, #059669);
+    color: #052E16;
+    font-size: 8.5px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .dual-bar .s-seg {
+    background: linear-gradient(90deg, #3B82F6, #1D4ED8);
+    color: #EFF6FF;
+    font-size: 8.5px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  /* SWAP & TRAP CARDS */
+  .swap-section-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  .swap-section-label.out {
+    background: var(--trap-red-dim);
+    color: #FCA5A5;
+    border-left: 3px solid var(--trap-red);
+  }
+
+  .swap-section-label.in {
+    background: var(--upgrade-green-dim);
+    color: #6EE7B7;
+    border-left: 3px solid var(--upgrade-green);
+  }
+
+  .card-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg-alt);
+    border: 1px solid var(--border-subtle);
+    border-radius: 7px;
+    padding: 5px 7px;
+  }
+
+  .card-row.trap {
+    border-left: 3px solid var(--trap-red);
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.09) 0%, var(--card-bg-alt) 45%);
+  }
+
+  .card-row.upgrade {
+    border-left: 3px solid var(--upgrade-green);
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.09) 0%, var(--card-bg-alt) 45%);
+  }
+
+  .hs-thumb {
+    width: 40px;
+    height: 50px;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #080C14;
+    border: 1px solid rgba(255,255,255,0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hs-thumb img {
+    width: 125%;
+    height: 125%;
+    object-fit: cover;
+    object-position: center 22%;
+  }
+
+  .card-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-name-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .card-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mana-badge {
+    background: #1D4ED8;
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid #60A5FA;
+    flex-shrink: 0;
+  }
+
+  .card-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  .metric-chip {
+    font-size: 9.2px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .metric-chip.bad {
+    background: rgba(239, 68, 68, 0.18);
+    color: #FCA5A5;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+  }
+
+  .metric-chip.good {
+    background: rgba(16, 185, 129, 0.18);
+    color: #6EE7B7;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+  }
+
+  .metric-chip.gold {
+    background: rgba(245, 158, 11, 0.16);
+    color: #FCD34D;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+
+  .metric-chip.cyan {
+    background: rgba(56, 189, 248, 0.16);
+    color: #7DD3FC;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
+
+  .card-reason {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.22;
+  }
+
+  /* 1-CLICK DECKCODE BOX */
+  .deckcode-box {
+    background: linear-gradient(90deg, #0D1624 0%, #132235 100%);
+    border: 1.5px solid var(--accent-gold);
+    border-radius: 8px;
+    padding: 7px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+  }
+
+  .deckcode-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .deckcode-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .deckcode-str {
+    flex: 1;
+    background: #070B12;
+    border: 1px solid var(--border-subtle);
+    color: #FCD34D;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    padding: 5px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .copy-btn {
+    background: linear-gradient(90deg, var(--accent-gold), #D97706);
+    color: #080C14;
+    border: none;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+  }
+
+  /* ZONE 2: CENTER KPI + 10-CLASS MATCHUP MATRIX + LEADERBOARD */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .kpi-card {
+    background: linear-gradient(145deg, #162032 0%, #0E1522 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .kpi-card.hero-kpi {
+    border: 1.5px solid var(--upgrade-green);
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.14) 0%, #101929 85%);
+  }
+
+  .kpi-label {
+    font-size: 9.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #FCD34D;
+  }
+
+  .kpi-main {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin: 3px 0 2px 0;
+  }
+
+  .kpi-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+  }
+
+  .kpi-delta {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 1.5px 6px;
+    border-radius: 5px;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.45);
+  }
+
+  .kpi-foot {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    line-height: 1.25;
+  }
+
+  /* MATCHUP TABLE */
+  .meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+  }
+
+  .meta-table th {
+    text-align: left;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.35px;
+    color: var(--text-muted);
+    padding: 4px 5px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(11, 16, 27, 0.8);
+  }
+
+  .meta-table td {
+    padding: 3.8px 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: middle;
+  }
+
+  .class-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .class-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    width: 100%;
+    height: 7px;
+    background: #080C14;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .delta-pos {
+    color: #34D399;
+    font-weight: 800;
+  }
+
+  .delta-neg {
+    color: #FCA5A5;
+    font-weight: 800;
+  }
+
+  /* MINI DECKLIST STRIP + RATIO SWEEP */
+  .decklist-strip {
+    background: #0B101B;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 7px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: auto;
+  }
+
+  .deck-pills-wrap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+
+  .mini-card-pill {
+    background: #141E30;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 2.5px 5px;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-main);
+  }
+
+  .mini-card-pill.minion-c {
+    border-left: 2.5px solid #10B981;
+  }
+
+  .mini-card-pill.spell-c {
+    border-left: 2.5px solid #38BDF8;
+  }
+
+  .mini-card-pill .mc-cost {
+    color: #93C5FD;
+    font-weight: 800;
+    margin-right: 3px;
+  }
+
+  .mini-card-pill .mc-qty {
+    color: #FCD34D;
+    font-weight: 800;
+    margin-left: 3px;
+  }
+
+  /* ZONE 3: SA007 AUDIT, CALIBRATION & MODEL NUANCES + MULLIGAN */
+  .sa007-box {
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, #0D1422 100%);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    border-radius: 9px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .calib-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .calib-card {
+    background: #090E17;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 5px 7px;
+    font-size: 9.5px;
+  }
+
+  .calib-card strong {
+    color: #FCD34D;
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10px;
+  }
+
+  .nuance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5px;
+  }
+
+  .nuance-item {
+    background: #090E17;
+    border-left: 3px solid var(--cyan-info);
+    border-radius: 5px;
+    padding: 4.5px 7px;
+    font-size: 9.4px;
+    line-height: 1.28;
+    color: var(--text-muted);
+  }
+
+  .nuance-item strong {
+    color: var(--text-main);
+  }
+
+  /* MULLIGAN + SHORTS SPLIT */
+  .mulligan-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .mull-col {
+    background: #0B101B;
+    border-radius: 7px;
+    padding: 6px 7px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .mull-col.keep { border-top: 2.5px solid var(--upgrade-green); }
+  .mull-col.toss { border-top: 2.5px solid var(--trap-red); }
+
+  .mull-header {
+    font-size: 9.8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mull-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5px;
+  }
+
+  .mull-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card-bg-alt);
+    padding: 3px 5px;
+    border-radius: 4px;
+    font-size: 9.4px;
+  }
+
+  .mull-item img {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    object-fit: cover;
+    object-position: center 20%;
+    flex-shrink: 0;
+  }
+
+  .mull-item .m-name {
+    font-weight: 700;
+    color: var(--text-main);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mull-item .m-stat {
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  /* FOOTER DISCLAIMER */
+  .bottom-footer {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 9.5px;
+    color: var(--text-muted);
+    background: #0A0F18;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .footer-guard {
+    color: #CBD5E1;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+  <!-- TOP HEADER BAR -->
+  <header class="top-header">
+    <div class="brand-left">
+      <div class="avatar-wrap">
+        <img src="avatar.png" alt="MisplayBot">
+      </div>
+      <div class="brand-title">
+        <h1>
+          MISPLAYBOT DECK LAB v2
+          <span class="gold-tag">21.730 Potjes · 18 Decks · 1.025 Games/Finalist</span>
+        </h1>
+        <div class="brand-sub">
+          Speler: <strong>GrayWisp (David Gökce)</strong> · Gewogen op 41 Echte Burn Mage <code>Power.log</code> Potjes · <code>sim_engine.py</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE BUILD SWITCHER -->
+    <div class="build-switcher">
+      <button id="btn-0dust" class="tab-btn active-0dust" onclick="selectBuild('0dust')">
+        <span>🏆 Winnaar A: 0-Dust Build (22M/8S)</span>
+        <span class="tab-badge">62,4% (+10,6% Δ)</span>
+      </button>
+      <button id="btn-40dust" class="tab-btn" onclick="selectBuild('40dust')">
+        <span>⚡ Winnaar B: 40-Dust Upgrade (20M/10S)</span>
+        <span class="tab-badge">63,0% (+11,2% Δ)</span>
+      </button>
+      <button id="btn-frostbolt" class="tab-btn" onclick="selectBuild('frostbolt')">
+        <span>⚠️ Waarom Frostbolt (12M/18S) Faalde</span>
+        <span class="tab-badge">48,0% (-3,8% Δ)</span>
+      </button>
+    </div>
+
+    <!-- MANDATORY SUPERAGENT007 AUDIT BADGES -->
+    <div class="audit-badges">
+      <div class="audit-row">
+        <div class="badge-sa007 clear">🛡️ SA007 AUDIT: CLEAR WITH NOTES</div>
+        <div class="badge-sa007 cov">✅ SIM COVERAGE: 30/30 KAARTEN EXPLICIET GEMODELLEERD (0 VANILLA FALLBACKS)</div>
+      </div>
+      <div class="audit-row">
+        <div class="badge-sa007 safe">🔒 100% OUT-OF-CLIENT · 0% BAN-RISICO (Geen geheugen-injectie; leest enkel post-game Power.log)</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN 3-ZONE CONTENT -->
+  <main class="main-grid">
+
+    <!-- ==================== ZONE 1: RATIO SHIFT, CARD SWAPS & 1-CLICK DECKCODE ==================== -->
+    <section class="col">
+      <div class="panel" style="flex: 1;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="zone-tag">ZONE 1</span>
+            Minion/Spell Ratio Omslag &amp; Kaart-Swaps
+          </div>
+          <div id="dust-badge" class="dust-saved-pill">💎 Kosten: 0 Dust (100% Owned)</div>
+        </div>
+
+        <!-- MINION / SPELL RATIO SHIFT BAR -->
+        <div class="ratio-shift-box">
+          <div class="ratio-shift-top">
+            <span style="color: var(--text-main);">📊 DE STRUCTURELE OMSLAG (Minions vs. Spells)</span>
+            <span id="ratio-headline-tag" style="color: #34D399;">11M/19S ➔ 22M/8S (+117% Minion Face Dmg)</span>
+          </div>
+
+          <div class="ratio-bars-grid">
+            <span style="color:#FCA5A5; font-weight:700;">V2.1 Baseline (51,8%)</span>
+            <div class="dual-bar">
+              <div class="m-seg" style="width: 36.7%; background: #475569; color:#E2E8F0;">11 Minions (37%)</div>
+              <div class="s-seg" style="width: 63.3%; background: #991B1B;">19 Spells (63%)</div>
+            </div>
+            <span style="color:#FCA5A5; text-align:right; font-weight:700;">8,9m / 21,8s</span>
+          </div>
+
+          <div class="ratio-bars-grid">
+            <span style="color:#FCD34D; font-weight:700;">Frostbolt 12M/18S (48,0%)</span>
+            <div class="dual-bar">
+              <div class="m-seg" style="width: 40.0%; background: #B45309; color:#FEF3C7;">12 Minions (40%)</div>
+              <div class="s-seg" style="width: 60.0%; background: #7F1D1D;">18 Spells (60%)</div>
+            </div>
+            <span style="color:#FCD34D; text-align:right; font-weight:700;">7,8m / 17,3s</span>
+          </div>
+
+          <div class="ratio-bars-grid">
+            <span id="active-ratio-lbl" style="color:#6EE7B7; font-weight:800;">★ V3 0-Dust (62,4%)</span>
+            <div class="dual-bar" style="border-color:#10B981;">
+              <div id="active-m-bar" class="m-seg" style="width: 73.3%;">22 Minions (73%)</div>
+              <div id="active-s-bar" class="s-seg" style="width: 26.7%;">8 Spells (27%)</div>
+            </div>
+            <span id="active-dmg-split" style="color:#6EE7B7; text-align:right; font-weight:800;">16,9m / 9,1s</span>
+          </div>
+        </div>
+
+        <!-- OUT: TRAP CARDS -->
+        <div class="swap-section-label out">
+          <span>🚨 UIT HET DECK — Geïdentificeerde Valstrik-Kaarten (Echte Logs + Sim)</span>
+          <span>57,9% Dood in Hand</span>
+        </div>
+
+        <!-- Antonidas & Kalec -->
+        <div class="card-row trap">
+          <div class="hs-thumb"><img src="cards/img/CORE_EX1_559.png" alt="Antonidas"></div>
+          <div class="card-info">
+            <div class="card-name-line">
+              <span class="card-name">1× Archmage Antonidas + 1× Archmage Kalec</span>
+              <span class="mana-badge">7m &amp; 4m</span>
+            </div>
+            <div class="card-metrics">
+              <span class="metric-chip bad">Antonidas: 57,9% Ongespeeld (11/19)</span>
+              <span class="metric-chip bad">0 Fireballs Ooit Gecast</span>
+              <span class="metric-chip bad">Kalec: 58,7% Spells Miste +1 SD</span>
+            </div>
+            <div class="card-reason">
+              Goedkope spells moeten in 11M/19S op T1–T5 op vijandelijke minions worden geschoten; Antonidas (28,6% gespeelde WR) zit dood in de hand.
+            </div>
+          </div>
+        </div>
+
+        <!-- Trage Setup Spells -->
+        <div class="card-row trap">
+          <div class="hs-thumb"><img src="cards/img/TLC_364.png" alt="Story of the Waygate"></div>
+          <div class="card-info">
+            <div class="card-name-line">
+              <span class="card-name">Trage Setup-Spells (Waygate, Grove, Arrival, Brilliance, Astral Rain)</span>
+              <span class="mana-badge">2m–7m Spells</span>
+            </div>
+            <div class="card-metrics">
+              <span class="metric-chip bad">Waygate: 29,2% Gespeelde WR (33,3% Dood)</span>
+              <span class="metric-chip bad">Grove: 39,3% Drawn WR</span>
+              <span class="metric-chip bad">Frostbolt 12M/18S: Slechts 48,0% Score</span>
+            </div>
+            <div class="card-reason">
+              <strong>Waarom alléén Frostbolt faalde (48,0%):</strong> Zonder extra bord-minions doet je deck slechts <strong>7,8 minion-schade</strong> en zak je naar 39,0% vs Priest en 19,0% vs Warlock.
+            </div>
+          </div>
+        </div>
+
+        <!-- IN: DIRECT-IMPACT MINIONS -->
+        <div class="swap-section-label in">
+          <span id="in-section-title">✅ IN HET DECK — Direct-Impact Elemental/Dragon Pakket (22M/8S)</span>
+          <span id="in-section-sub">0 Dust · Direct Speelbaar</span>
+        </div>
+
+        <!-- Early Tempo + Battlecry Burn -->
+        <div class="card-row upgrade">
+          <div class="hs-thumb"><img src="cards/img/CORE_UNG_084.png" alt="Fire Plume Phoenix"></div>
+          <div class="card-info">
+            <div class="card-name-line">
+              <span class="card-name">2× Sizzling Cinder, 2× Rockskipper, 2× Fire Plume Phoenix, 2× Lifedrinker</span>
+              <span class="mana-badge">1m–4m Tempo</span>
+            </div>
+            <div class="card-metrics">
+              <span class="metric-chip good">Minion Heldschade: 7,8 ➔ 16,9 / potje</span>
+              <span class="metric-chip good">Directe Battlecry/DR Schade + Lichaam</span>
+            </div>
+            <div class="card-reason">
+              Pakken het bord op beurt 1–4 én dwingen herhaalde minion-aanvallen af zodat je 8–10 kern-burnspells op het gezicht kunnen.
+            </div>
+          </div>
+        </div>
+
+        <!-- Slitherdrake + Conflux Crasher + Siamat -->
+        <div class="card-row upgrade">
+          <div class="hs-thumb"><img src="cards/img/END_033.png" alt="Prescient Slitherdrake"></div>
+          <div class="card-info">
+            <div class="card-name-line">
+              <span class="card-name">2× Prescient Slitherdrake (4m 5/8), 2× Broodmother, 2× Conflux Crasher, Siamat</span>
+              <span class="mana-badge">3m–7m Impact</span>
+            </div>
+            <div class="card-metrics">
+              <span class="metric-chip good">Slitherdrake: 4-Mana 5/8 Elusive</span>
+              <span class="metric-chip good">Crasher: 4 AoE op Alle Vijanden / 7 Dmg</span>
+              <span class="metric-chip cyan" id="dynamic-swap-chip">2× Devious Coyote (0-Dust)</span>
+            </div>
+            <div id="dynamic-swap-reason" class="card-reason">
+              <strong>0-Dust Build (22M/8S):</strong> Speelt 2× <em>Devious Coyote</em> (5/3 Stealth kosten-reductie) voor maximale minion-druk (<strong>16,9 schade/game</strong>).
+            </div>
+          </div>
+        </div>
+
+        <!-- 1-CLICK DECKCODE BOX -->
+        <div class="deckcode-box">
+          <div class="deckcode-top">
+            <span id="deckcode-label" style="color: #FCD34D;">📋 1-KLIK DECKCODE — WINNAAR A: 0-DUST BUILD (22M/8S · 62,4%)</span>
+            <span id="copy-status" style="color: #34D399;">Klaar voor import in Hearthstone</span>
+          </div>
+          <div class="deckcode-input-row">
+            <input id="deckcode-input" class="deckcode-str" type="text" readonly value="AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfLrQebsAeLsQfssgfOuweEvQeSxAesxgeG4AcA">
+            <button class="copy-btn" onclick="copyDeckCode()">Kopieer Code</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== ZONE 2: POCKET-META SIM SCORE & 10-CLASS MATCHUP MATRIX ==================== -->
+    <section class="col">
+      <!-- Top KPI Row (Mandatory SA007 Metric Framing) -->
+      <div class="kpi-row">
+        <div class="kpi-card hero-kpi">
+          <div class="kpi-label">POCKET-META SIM SCORE (RELATIEVE A/B Δ)</div>
+          <div class="kpi-main">
+            <span id="kpi-score" class="kpi-val">62,4%</span>
+            <span id="kpi-delta" class="kpi-delta">+10,6% Δ vs V2.1 (+24,6% vs V1)</span>
+          </div>
+          <div id="kpi-sub" class="kpi-foot">
+            <strong>640W–385L</strong> (1.025 games) · V1: <strong>37,8%</strong> ➔ V2: <strong>45,7%</strong> ➔ V2.1: <strong>51,8%</strong>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">MINION-SCHADE OP VIJANDELIJKE HELD</div>
+          <div class="kpi-main">
+            <span id="kpi-minion-dmg" class="kpi-val" style="color: var(--accent-gold);">16,9 / game</span>
+            <span id="kpi-minion-delta" class="kpi-delta" style="background: var(--accent-gold-dim); color: #FCD34D; border-color: rgba(245,158,11,0.4);">+117% vs 12M/18S</span>
+          </div>
+          <div id="kpi-dmg-foot" class="kpi-foot">
+            Van <strong>7,8</strong> (Frostbolt 12M/18S) naar <strong>16,9</strong> minion-schade + <strong>9,1</strong> spell face-burn
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">PRIEST &amp; WARRIOR DOORBRAAK</div>
+          <div class="kpi-main">
+            <span id="kpi-pw-val" class="kpi-val" style="color: #38BDF8;">54,0% / 68,0%</span>
+            <span id="kpi-pw-delta" class="kpi-delta" style="background: var(--cyan-dim); color: #7DD3FC; border-color: rgba(56,189,248,0.4);">+16% / +20% Δ</span>
+          </div>
+          <div id="kpi-pw-foot" class="kpi-foot">
+            V2.1 zat vast op <strong>38,0%</strong> vs Priest &amp; <strong>48,0%</strong> vs Warrior (40Dust: <strong>64,0%</strong> Priest!)
+          </div>
+        </div>
+      </div>
+
+      <!-- 10-CLASS MATCHUP MATRIX -->
+      <div class="panel" style="flex: 1;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="zone-tag">ZONE 2A</span>
+            10-Class Pocket-Meta Matchup Matrix (1.025 Gesimuleerde Potjes per Finalist)
+          </div>
+          <span style="font-size: 9.5px; color: var(--text-muted);">Gewogen naar Davids 41 Burn Mage Ladder-Logs</span>
+        </div>
+
+        <table class="meta-table">
+          <thead>
+            <tr>
+              <th>Klasse &amp; Ladder-Archetype</th>
+              <th>Sim Gewicht</th>
+              <th>V2.1 (11M/19S)</th>
+              <th>12M/18S Frostbolt</th>
+              <th>V3 0-Dust (22M/8S)</th>
+              <th>V3 40-Dust (20M/10S)</th>
+              <th style="width: 96px;">Actieve Score</th>
+              <th>Rel. Δ (vs V2.1)</th>
+            </tr>
+          </thead>
+          <tbody id="matchup-tbody">
+            <!-- Populated dynamically by JS -->
+          </tbody>
+        </table>
+
+        <!-- ACTIVE 30-CARD DECKLIST & LEADERBOARD SUMMARY -->
+        <div class="decklist-strip">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="decklist-title" style="font-size:10px; font-weight:800; color:var(--text-main);">
+              🃏 ACTIEVE 30-KAARTEN LIJST: V3_R22M_8S_HeavyMinion (22 Minions / 8 Spells · 0 Dust)
+            </span>
+            <span style="font-size:9.2px; color:var(--text-muted);">
+              Groen = Minion (Directe Impact) · Blauw = Kern-Burnspell
+            </span>
+          </div>
+          <div id="decklist-grid" class="deck-pills-wrap">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ZONE 3: SA007 AUDIT, CALIBRATION & MULLIGAN ==================== -->
+    <section class="col">
+      <!-- Mandatory SA007 Methodologie, Kalibratie & Model-Nuances Box -->
+      <div class="sa007-box">
+        <div class="panel-header" style="border-bottom-color: rgba(245, 158, 11, 0.25);">
+          <div class="panel-title" style="color: #FCD34D;">
+            <span class="zone-tag">ZONE 3A</span>
+            SA007 Methodologie, Kalibratie &amp; Model-Nuances
+          </div>
+          <span style="font-size: 9.2px; font-weight: 800; color: #34D399;">CLEAR WITH NOTES</span>
+        </div>
+
+        <!-- Empirical Calibration vs Simulator -->
+        <div style="font-size: 9.8px; font-weight: 800; color: var(--text-main);">
+          1. Kalibratie Echte Logs (41 Burn Mage games) vs. Simulator (1.025 games/finalist):
+        </div>
+        <div class="calib-grid">
+          <div class="calib-card">
+            <strong>📊 Baselines (Echte Logs vs. Sim)</strong>
+            • <code>V1 (12M/18S)</code>: Log <strong>28,6%</strong> (14g) · Sim <strong>37,8%</strong><br>
+            • <code>V2 (13M/17S)</code>: Log <strong>50,0%</strong> (22g) · Sim <strong>45,7%</strong><br>
+            • <code>V2.1 (11M/19S)</code>: Log <strong>40,0%</strong> (5g) · Sim <strong>51,8%</strong>
+          </div>
+          <div class="calib-card">
+            <strong>🚨 Valstrik-Bewijs in Echte Power.log</strong>
+            • <code>Antonidas</code>: <strong>57,9%</strong> ongespeeld in hand (11/19 getrokken, 28,6% WR gespeeld, <strong>0</strong> Fireballs ooit gecast).<br>
+            • <code>Kalec</code>: Miste <strong>58,7%</strong> van alle schade-spells.
+          </div>
+        </div>
+
+        <!-- 3 Explicit Model Assumptions -->
+        <div style="font-size: 9.8px; font-weight: 800; color: var(--text-main); margin-top: 1px;">
+          2. Drie Expliciete Model-Aannames (@SuperAgent007 Audit Nota):
+        </div>
+        <div class="nuance-list">
+          <div class="nuance-item">
+            <strong>① Turn-cap &amp; Ties (Beurt 25):</strong> Gelijkspel op de turn-cap (beurt 25) telt in de engine als <code>0,5</code> winst, wat zorgt voor <strong>~1–2% positieve drift</strong> t.o.v. trage control-losses. Daarom rapporteren we primair de <strong>Relatieve A/B Δ (+10,6% tot +11,2%)</strong>.
+          </div>
+          <div class="nuance-item">
+            <strong>② Mulligan-asymmetrie:</strong> De speler-bot gebruikt een archetype-specifieke mulligan (houdt 1–3 mana tempo + Dragon-activators), terwijl de tegenstander-bot een standaard curve-mulligan (<code>mana ≤ 3</code>) hanteert.
+          </div>
+          <div class="nuance-item">
+            <strong>③ Gecureerde Discover-pools:</strong> Kaarten als <code>Runed Orb</code>, <code>Cloud Serpent</code> en <code>Darkscale Broodmother</code> trekken in de simulator uit een vaste, gecureerde pool van sterke Mage-opties.
+          </div>
+        </div>
+      </div>
+
+      <!-- Mulligan Keep/Toss + Video Proof Card Preview -->
+      <div class="panel" style="flex: 1;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="zone-tag">ZONE 3B</span>
+            V3 Tempo-Burn Mulligan &amp; Matchup-Sleutels
+          </div>
+          <span style="font-size: 9.5px; color: var(--upgrade-green); font-weight: 700;">20M–22M Direct-Impact Regels</span>
+        </div>
+
+        <div class="mulligan-grid">
+          <div class="mull-col keep">
+            <div class="mull-header" style="color: #6EE7B7;">
+              <span>✅ ALTIJD HOUDEN (KEEP)</span>
+              <span>Rol</span>
+            </div>
+            <div class="mull-list">
+              <div class="mull-item">
+                <img src="cards/img/TLC_249.png" alt="Sizzling Cinder">
+                <span class="m-name">Sizzling Cinder / Spellwing (1m)</span>
+                <span class="m-stat" style="color:#34D399;">T1 Bord</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/TLC_427.png" alt="Rockskipper">
+                <span class="m-name">Rockskipper / Sleet Storm</span>
+                <span class="m-stat" style="color:#34D399;">3 Dmg Rock</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/CATA_111.png" alt="Darkscale Broodmother">
+                <span class="m-name">Darkscale Broodmother (3m)</span>
+                <span class="m-stat" style="color:#34D399;">+2 Mana!</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/END_033.png" alt="Prescient Slitherdrake">
+                <span class="m-name">Prescient Slitherdrake (als Dragon)</span>
+                <span class="m-stat" style="color:#FCD34D;">4m 5/8!</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mull-col toss">
+            <div class="mull-header" style="color: #FCA5A5;">
+              <span>❌ WEGDOEN (TOSS)</span>
+              <span>Reden</span>
+            </div>
+            <div class="mull-list">
+              <div class="mull-item">
+                <img src="cards/img/CORE_CS2_029.png" alt="Fireball">
+                <span class="m-name">Fireball (4m)</span>
+                <span class="m-stat" style="color:#FCA5A5;">Lethal Finisher</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/CATA_489.png" alt="Arcane Flow">
+                <span class="m-name">Arcane Flow (4m Shatter)</span>
+                <span class="m-stat" style="color:#FCA5A5;">Shatter bij Draw</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/TIME_004.png" alt="Conflux Crasher">
+                <span class="m-name">Conflux Crasher / Siamat (7m)</span>
+                <span class="m-stat" style="color:#FCA5A5;">Te zwaar T1</span>
+              </div>
+              <div class="mull-item">
+                <img src="cards/img/CORE_GIL_622.png" alt="Lifedrinker">
+                <span class="m-name">Lifedrinker (4m)</span>
+                <span class="m-stat" style="color:#FCD34D;">T4+ Burn/Heal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Matchup Strategy Callout -->
+        <div style="background:#090E17; border:1px solid var(--border-subtle); border-radius:7px; padding:6px 8px; margin-top:auto; font-size:9.5px; line-height:1.3; color:var(--text-muted);">
+          <strong style="color:#7DD3FC;">🎯 Waarom 40-Dust (+2e Common Arcane Barrage) Priest naar 64,0% trekt:</strong>
+          Tegen Priest (<code>54,0% ➔ 64,0%</code>) en Warlock (<code>16,8% ➔ 20,0%</code>) ruimt de tweede 3-mana <em>Arcane Barrage</em> (3 + 2 + 2 schade) sticky Deathrattles op zonder dat je <em>Slitherdrake</em> (5/8) of <em>Phoenix</em> hoeft in te leveren.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MANDATORY OFFICIAL BLIZZARD FAN-CONTENT DISCLAIMER FOOTER -->
+  <footer class="bottom-footer">
+    <span class="footer-guard">
+      Onbevooroordeelde community- &amp; analysetool voor @MisplayBot. Niet gelieerd aan of goedgekeurd door Blizzard Entertainment. Hearthstone® is een geregistreerd handelsmerk van Blizzard Entertainment, Inc. Werkt 100% buiten de Hearthstone-client om.
+    </span>
+    <span>
+      Suite: <strong>21.730 potjes · 18 decks (`results.json`)</strong> · SA007 Status: <strong>CLEAR WITH NOTES</strong>
+    </span>
+  </footer>
+
+<script>
+const BUILDS = {
+  "0dust": {
+    score: "62,4%",
+    delta: "+10,6% Δ vs V2.1 (+24,6% vs V1)",
+    sub: "<strong>640W–385L</strong> (1.025 games) · V1: <strong>37,8%</strong> ➔ V2: <strong>45,7%</strong> ➔ V2.1: <strong>51,8%</strong>",
+    minionDmg: "16,9 / game",
+    minionDelta: "+117% vs 12M/18S",
+    dmgFoot: "Van <strong>7,8</strong> (Frostbolt 12M/18S) naar <strong>16,9</strong> minion-schade + <strong>9,1</strong> spell face-burn",
+    pwVal: "54,0% / 68,0%",
+    pwDelta: "+16,0% / +20,0% Δ",
+    pwFoot: "V2.1 zat vast op <strong>38,0%</strong> vs Priest &amp; <strong>48,0%</strong> vs Warrior (40-Dust: <strong>64,0%</strong> Priest!)",
+    dustBadge: "💎 Kosten: 0 Dust (100% Owned in Collectie)",
+    ratioHeadline: "11M/19S ➔ 22M/8S (+117% Minion Face Dmg)",
+    activeRatioLbl: "★ V3 0-Dust (62,4%)",
+    mWidth: "73.3%",
+    mText: "22 Minions (73%)",
+    sWidth: "26.7%",
+    sText: "8 Spells (27%)",
+    dmgSplit: "16,9m / 9,1s",
+    inTitle: "✅ IN HET DECK — Direct-Impact Elemental/Dragon Pakket (22M/8S)",
+    inSub: "0 Dust · Direct Speelbaar",
+    swapChip: "2× Devious Coyote (0-Dust)",
+    swapReason: "<strong>0-Dust Build (22M/8S):</strong> Speelt 2× <em>Devious Coyote</em> (5/3 Stealth kosten-reductie) voor maximale minion-druk (<strong>16,9 schade/game</strong>).",
+    codeLabel: "📋 1-KLIK DECKCODE — WINNAAR A: 0-DUST BUILD (22M/8S · 62,4%)",
+    code: "AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfLrQebsAeLsQfssgfOuweEvQeSxAesxgeG4AcA",
+    deckTitle: "🃏 ACTIEVE 30-KAARTEN LIJST: V3_R22M_8S_HeavyMinion (22 Minions / 8 Spells · 0 Dust)",
+    cards: [
+      {c:1, q:2, n:"Sizzling Cinder", t:"m"},
+      {c:1, q:2, n:"Violet Spellwing", t:"m"},
+      {c:1, q:2, n:"Sleet Storm", t:"s"},
+      {c:2, q:2, n:"Rockskipper", t:"m"},
+      {c:2, q:2, n:"Runed Orb", t:"s"},
+      {c:3, q:2, n:"Cloud Serpent", t:"m"},
+      {c:3, q:2, n:"Darkscale Broodmother", t:"m"},
+      {c:4, q:2, n:"Fire Plume Phoenix", t:"m"},
+      {c:4, q:2, n:"Lifedrinker", t:"m"},
+      {c:4, q:1, n:"Lord Xavius", t:"m"},
+      {c:4, q:2, n:"Arcane Flow", t:"s"},
+      {c:4, q:2, n:"Fireball", t:"s"},
+      {c:5, q:2, n:"Devious Coyote", t:"m"},
+      {c:7, q:2, n:"Prescient Slitherdrake", t:"m"},
+      {c:7, q:2, n:"Conflux Crasher", t:"m"},
+      {c:7, q:1, n:"Siamat", t:"m"}
+    ]
+  },
+  "40dust": {
+    score: "63,0%",
+    delta: "+11,2% Δ vs V2.1 (+25,2% vs V1)",
+    sub: "<strong>646W–379L</strong> (1.025 games) · Hoogste Overall Score (+1× Common Arcane Barrage)",
+    minionDmg: "15,6 / game",
+    minionDelta: "+100% vs 12M/18S",
+    dmgFoot: "<strong>15,6</strong> minion-schade + <strong>10,4</strong> spell-burn dankzij 2× <em>Arcane Barrage</em>",
+    pwVal: "64,0% / 67,3%",
+    pwDelta: "+26,0% / +19,3% Δ",
+    pwFoot: "Priest springt van <strong>38,0% ➔ 64,0% (+26,0% Δ)</strong> en Warrior naar <strong>67,3%</strong>!",
+    dustBadge: "⚡ Kosten: 40 Dust (+1× Common Arcane Barrage)",
+    ratioHeadline: "11M/19S ➔ 20M/10S (+26,0% vs Priest!)",
+    activeRatioLbl: "★ V3 40-Dust (63,0%)",
+    mWidth: "66.7%",
+    mText: "20 Minions (67%)",
+    sWidth: "33.3%",
+    sText: "10 Spells (33%)",
+    dmgSplit: "15,6m / 10,4s",
+    inTitle: "✅ IN HET DECK — 20M/10S + 2× Arcane Barrage Upgrade (40 Dust)",
+    inSub: "40 Dust · Hoogste Winrate (63,0%)",
+    swapChip: "2× Arcane Barrage (40-Dust Upgrade)",
+    swapReason: "<strong>40-Dust Upgrade (20M/10S):</strong> Vervangt 2× Coyote door 2× <em>Arcane Barrage</em> (3m: 3+2+2 dmg), wat Priest naar <strong>64,0%</strong> trekt!",
+    codeLabel: "📋 1-KLIK DECKCODE — WINNAAR B: 40-DUST UPGRADE (20M/10S · 63,0%)",
+    code: "AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfopQfLrQeLsQfssgfOuweEvQeSxAesxgeG4AcA",
+    deckTitle: "🃏 ACTIEVE 30-KAARTEN LIJST: V3_LowDust_40d_2xBarrage_20M_10S (20 Minions / 10 Spells · 40 Dust)",
+    cards: [
+      {c:1, q:2, n:"Sizzling Cinder", t:"m"},
+      {c:1, q:2, n:"Violet Spellwing", t:"m"},
+      {c:1, q:2, n:"Sleet Storm", t:"s"},
+      {c:2, q:2, n:"Rockskipper", t:"m"},
+      {c:2, q:2, n:"Runed Orb", t:"s"},
+      {c:3, q:2, n:"Arcane Barrage", t:"s"},
+      {c:3, q:2, n:"Cloud Serpent", t:"m"},
+      {c:3, q:2, n:"Darkscale Broodmother", t:"m"},
+      {c:4, q:2, n:"Fire Plume Phoenix", t:"m"},
+      {c:4, q:2, n:"Lifedrinker", t:"m"},
+      {c:4, q:1, n:"Lord Xavius", t:"m"},
+      {c:4, q:2, n:"Arcane Flow", t:"s"},
+      {c:4, q:2, n:"Fireball", t:"s"},
+      {c:7, q:2, n:"Prescient Slitherdrake", t:"m"},
+      {c:7, q:2, n:"Conflux Crasher", t:"m"},
+      {c:7, q:1, n:"Siamat", t:"m"}
+    ]
+  },
+  "frostbolt": {
+    score: "48,0%",
+    delta: "-3,8% Δ vs V2.1 (-15,0% vs V3)",
+    sub: "<strong>Waarom alleen Frostbolt faalde:</strong> 12M/18S houdt het bord niet vast op Beurt 1–4",
+    minionDmg: "7,8 / game",
+    minionDelta: "Te weinig bord-druk!",
+    dmgFoot: "Slechts <strong>7,8</strong> minion-schade dwingt je om Frostbolt/Runed Orb op minions te schieten",
+    pwVal: "39,0% / 49,3%",
+    pwDelta: "+1,0% / +1,3% Δ",
+    pwFoot: "Blijft kansloos tegen Priest (<strong>39,0%</strong>) en Warlock (<strong>19,0%</strong>)",
+    dustBadge: "⚠️ Diagnose-Build: 12M/18S DirectSwap (Faalde op 48,0%)",
+    ratioHeadline: "12M/18S houdt het oude bordprobleem in stand (7,8m dmg)",
+    activeRatioLbl: "⚠️ 12M/18S Swap (48,0%)",
+    mWidth: "40.0%",
+    mText: "12 Minions (40%)",
+    sWidth: "60.0%",
+    sText: "18 Spells (60%)",
+    dmgSplit: "7,8m / 17,3s",
+    inTitle: "⚠️ WAAROM 12M/18S MET FROSTBOLT NIET GENOEG WAS (48,0%)",
+    inSub: "Bewijs van Davids Ratio-Inzicht",
+    swapChip: "Slechts 12 Minions = Bord Verlies",
+    swapReason: "<strong>Cruciaal Bewijs:</strong> Antonidas/Kalec vervangen door <em>Frostbolt</em> op 12M/18S zakte naar <strong>48,0%</strong> omdat vijandelijke minions vrij spel krijgen.",
+    codeLabel: "📋 VERGELIJKING: GEBRUIK HIERONDER WINNAAR A (62,4%) OF B (63,0%)",
+    code: "AAECAf0EAujmBsODBw79ngSg1ASFlQfOmweVpAfLrQebsAeLsQfssgfOuweEvQeSxAesxgeG4AcA",
+    deckTitle: "🃏 DIAGNOSE-LIJST: V3_R12M_18S_DirectSwap (12 Minions / 18 Spells · Waarom 12M/18S Faalde)",
+    cards: [
+      {c:1, q:2, n:"Sizzling Cinder", t:"m"},
+      {c:1, q:2, n:"Violet Spellwing", t:"m"},
+      {c:1, q:2, n:"Sleet Storm", t:"s"},
+      {c:2, q:2, n:"Frostbolt", t:"s"},
+      {c:2, q:2, n:"Runed Orb", t:"s"},
+      {c:2, q:2, n:"Smoldering Grove", t:"s"},
+      {c:2, q:2, n:"Story of Waygate", t:"s"},
+      {c:3, q:2, n:"Time-Twisted Seer", t:"m"},
+      {c:3, q:2, n:"Vulgar Homunculus", t:"m"},
+      {c:4, q:2, n:"Fire Plume Phoenix", t:"m"},
+      {c:4, q:2, n:"Arcane Flow", t:"s"},
+      {c:4, q:2, n:"Fireball", t:"s"},
+      {c:5, q:2, n:"Astral Rain", t:"s"},
+      {c:6, q:2, n:"Arrival of Titans", t:"s"},
+      {c:7, q:1, n:"Conflux Crasher", t:"m"},
+      {c:7, q:1, n:"Siamat", t:"m"}
+    ]
+  }
+};
+
+const MATCHUPS = [
+  { cls: "Priest (Khelos / Deathrattle)", color: "#E2E8F0", games: "150g", v21: 38.0, fb: 39.0, d0: 54.0, d40: 64.0 },
+  { cls: "Warrior (Armor / Dragon-Quest)", color: "#EF4444", games: "150g", v21: 48.0, fb: 49.3, d0: 68.0, d40: 67.3 },
+  { cls: "Death Knight (Handbuff / Husk)", color: "#38BDF8", games: "150g", v21: 70.7, fb: 66.7, d0: 80.0, d40: 78.0 },
+  { cls: "Warlock (C'Thun / Control-Drain)", color: "#A855F7", games: "125g", v21: 33.2, fb: 19.0, d0: 16.8, d40: 20.0 },
+  { cls: "Demon Hunter (Aggro / Tempo)", color: "#10B981", games: "125g", v21: 41.6, fb: 38.0, d0: 45.6, d40: 44.0 },
+  { cls: "Mage (Burn Mirror)", color: "#60A5FA", games: "100g", v21: 55.0, fb: 52.0, d0: 60.0, d40: 59.0 },
+  { cls: "Druid (Ramp / Spreading Plague)", color: "#FB923C", games: "75g",  v21: 64.0, fb: 76.7, d0: 94.7, d40: 93.3 },
+  { cls: "Rogue (Tempo / Herald)", color: "#FACC15", games: "50g",  v21: 94.0, fb: 90.0, d0: 92.0, d40: 90.0 },
+  { cls: "Paladin (Silver Hand / Divine)", color: "#F472B6", games: "50g",  v21: 82.7, fb: 83.3, d0: 84.0, d40: 82.0 },
+  { cls: "Shaman (Elemental / Burn)", color: "#3B82F6", games: "50g",  v21: 56.0, fb: 36.7, d0: 64.0, d40: 64.0 }
+];
+
+function fmtPct(v) {
+  return v.toFixed(1).replace('.', ',') + '%';
+}
+
+function selectBuild(key) {
+  const b = BUILDS[key] || BUILDS["0dust"];
+
+  document.getElementById("btn-0dust").className = "tab-btn" + (key === "0dust" ? " active-0dust" : "");
+  document.getElementById("btn-40dust").className = "tab-btn" + (key === "40dust" ? " active-40dust" : "");
+  document.getElementById("btn-frostbolt").className = "tab-btn" + (key === "frostbolt" ? " active-frostbolt" : "");
+
+  document.getElementById("kpi-score").textContent = b.score;
+  document.getElementById("kpi-delta").textContent = b.delta;
+  document.getElementById("kpi-sub").innerHTML = b.sub;
+  document.getElementById("kpi-minion-dmg").textContent = b.minionDmg;
+  document.getElementById("kpi-minion-delta").textContent = b.minionDelta;
+  document.getElementById("kpi-dmg-foot").innerHTML = b.dmgFoot;
+  document.getElementById("kpi-pw-val").textContent = b.pwVal;
+  document.getElementById("kpi-pw-delta").textContent = b.pwDelta;
+  document.getElementById("kpi-pw-foot").innerHTML = b.pwFoot;
+
+  document.getElementById("dust-badge").textContent = b.dustBadge;
+  document.getElementById("ratio-headline-tag").textContent = b.ratioHeadline;
+  document.getElementById("active-ratio-lbl").textContent = b.activeRatioLbl;
+  document.getElementById("active-m-bar").style.width = b.mWidth;
+  document.getElementById("active-m-bar").textContent = b.mText;
+  document.getElementById("active-s-bar").style.width = b.sWidth;
+  document.getElementById("active-s-bar").textContent = b.sText;
+  document.getElementById("active-dmg-split").textContent = b.dmgSplit;
+
+  document.getElementById("in-section-title").textContent = b.inTitle;
+  document.getElementById("in-section-sub").textContent = b.inSub;
+  document.getElementById("dynamic-swap-chip").textContent = b.swapChip;
+  document.getElementById("dynamic-swap-reason").innerHTML = b.swapReason;
+
+  document.getElementById("deckcode-label").textContent = b.codeLabel;
+  document.getElementById("deckcode-input").value = b.code;
+  document.getElementById("decklist-title").textContent = b.deckTitle;
+
+  // Render 30-card mini pills
+  const dlGrid = document.getElementById("decklist-grid");
+  dlGrid.innerHTML = b.cards.map(c => `
+    <div class="mini-card-pill ${c.t === 'm' ? 'minion-c' : 'spell-c'}">
+      <span><span class="mc-cost">${c.c}m</span>${c.n}</span>
+      <span class="mc-qty">${c.q}×</span>
+    </div>
+  `).join("");
+
+  // Render 10-class matchup table
+  const tbody = document.getElementById("matchup-tbody");
+  tbody.innerHTML = MATCHUPS.map(m => {
+    const activeVal = key === "40dust" ? m.d40 : (key === "frostbolt" ? m.fb : m.d0);
+    const diff = activeVal - m.v21;
+    const diffStr = (diff >= 0 ? "+" : "") + diff.toFixed(1).replace('.', ',') + "%";
+    const diffCls = diff >= 0 ? "delta-pos" : "delta-neg";
+    const barColor = activeVal >= 60 ? "linear-gradient(90deg, #10B981, #34D399)" :
+                     (activeVal >= 45 ? "linear-gradient(90deg, #F59E0B, #FBBF24)" : "linear-gradient(90deg, #EF4444, #F87171)");
+    return `
+      <tr>
+        <td><span class="class-pill"><span class="class-dot" style="background:${m.color};"></span>${m.cls}</span></td>
+        <td><strong>${m.games}</strong></td>
+        <td style="color:#94A3B8;">${fmtPct(m.v21)}</td>
+        <td style="color:${key==='frostbolt' ? '#FCA5A5;font-weight:800' : '#94A3B8'};">${fmtPct(m.fb)}</td>
+        <td style="color:${key==='0dust' ? '#6EE7B7;font-weight:900' : '#CBD5E1'};">${fmtPct(m.d0)}</td>
+        <td style="color:${key==='40dust' ? '#7DD3FC;font-weight:900' : '#CBD5E1'};">${fmtPct(m.d40)}</td>
+        <td>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, activeVal)}%; background:${barColor};"></div></div>
+        </td>
+        <td class="${diffCls}">${diffStr}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function copyDeckCode() {
+  const inp = document.getElementById("deckcode-input");
+  navigator.clipboard && navigator.clipboard.writeText(inp.value);
+  const st = document.getElementById("copy-status");
+  st.textContent = "✅ Deckcode Gekopieerd!";
+  setTimeout(() => { st.textContent = "Klaar voor import in Hearthstone"; }, 2000);
+}
+
+// Check query string ?build=0dust | 40dust | frostbolt
+const params = new URLSearchParams(window.location.search);
+const initialBuild = params.get("build") || "0dust";
+selectBuild(initialBuild);
+</script>
+</body>
+</html>
